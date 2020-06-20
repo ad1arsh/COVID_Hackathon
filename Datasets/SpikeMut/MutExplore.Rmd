@@ -8,37 +8,33 @@ output: pdf_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+# Mutagenic data of spike protein
 
-## R Markdown
-
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
-```
-
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
-
-
-This is a notebook exploring the SARS-CoV-2 mutagenic data. The first step is to import the tidyverse library which will be used to conduct exploratory data analysis.
+This is a notebook exploring the SARS-CoV-2 mutagenic data. The first step is to import the tidyverse library which will be used to conduct exploratory data analysis, and import the data.
 
 ```{r}
 library(tidyverse)
 
 file<-read.csv("data.csv",header= TRUE, sep=",")
-file
+```
+
+Then, the data can be compartmentalized into each residue.
+```{r}
+
+
+bool<-file[file$Residue..==19, ]
+
+
+
+
+tdiff1=abs(bool$Top_rep1-bool$Bottom_rep1)
+
+mut1=bool$Substitution[which.max(tdiff1)]
+mut2=
+
+
+
+
 
 ```
 
