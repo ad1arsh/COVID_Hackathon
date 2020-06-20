@@ -16,22 +16,46 @@ This is a notebook exploring the SARS-CoV-2 mutagenic data. The first step is to
 library(tidyverse)
 
 file<-read.csv("data.csv",header= TRUE, sep=",")
+dim(file)
+head(file,N=6L)
+tail(file, N=-6L)
+fin_res=file[2340,"Residue.."]
+
 ```
 
-Then, the data can be compartmentalized into each residue.
+Then, the data can be compartmentalized into each residue.Residue 19 has been used as an example
+
 ```{r}
-
-
 bool<-file[file$Residue..==19, ]
+```
 
 
+```{r}
+ggplot(data=bool)+geom_point(mapping=aes(x=Substitution,y=Top_rep1))
 
+counts <- c(bool$Top_rep1,bool$Bottom_rep1)
+x <- c(bool$Substitution, bool$Substitution)
+regions <- c("Top_rep1", "Bottom_rep1")
+col <- c("darkblue","red")
 
+barplot(counts, names.arg=x, main="Spike plot for '19' residue rep1",
+  xlab="Amino number", col=c("darkblue","red"),
+  legend = rownames(counts), beside=TRUE)
+
+legend("topleft", regions, cex = 0.5, fill = col)
+
+```
+
+Now, it is likely that the amino acid with the highest top_rep value and the least bottom_rep value is the mutagen with the highest affinity for the reactive binding domain.
+
+```{r}
 tdiff1=abs(bool$Top_rep1-bool$Bottom_rep1)
 
 mut1=bool$Substitution[which.max(tdiff1)]
-mut2=
+```
 
+```{r}
+#for 
 
 
 
