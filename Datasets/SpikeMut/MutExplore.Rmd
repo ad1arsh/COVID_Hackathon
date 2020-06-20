@@ -37,7 +37,7 @@ This is a notebook exploring the SARS-CoV-2 mutagenic data. The first step is to
 ```{r}
 library(tidyverse)
 
-read.csv()
+file<-read.csv("data.csv",header= TRUE, sep=",")
 
 
 ```
