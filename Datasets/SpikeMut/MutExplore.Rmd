@@ -14,12 +14,13 @@ This is a notebook exploring the SARS-CoV-2 mutagenic data. The first step is to
 
 ```{r}
 library(tidyverse)
-
 file<-read.csv("data.csv",header= TRUE, sep=",")
 dim(file)
 head(file,N=6L)
 tail(file, N=-6L)
-fin_res=file[2340,"Residue.."]
+fin_res<-file[2340,"Residue.."] # Taking the first residue
+fin_start<-file[1,"Residue.."]  # Taking the last residue
+res_vector<-fin_start:fin_res   # Formulating a residue vector
 
 ```
 
@@ -32,6 +33,11 @@ bool<-file[file$Residue..==19, ]
 
 ```{r}
 ggplot(data=bool)+geom_point(mapping=aes(x=Substitution,y=Top_rep1))
+
+```
+
+
+```{r plot, echo=FALSE}
 
 counts <- c(bool$Top_rep1,bool$Bottom_rep1)
 x <- c(bool$Substitution, bool$Substitution)
@@ -46,19 +52,76 @@ legend("topleft", regions, cex = 0.5, fill = col)
 
 ```
 
-Now, it is likely that the amino acid with the highest top_rep value and the least bottom_rep value is the mutagen with the highest affinity for the reactive binding domain.
+Now, it is likely that the amino acid with the highest top_rep value and the least bottom_rep value is the mutagen with the highest affinity for the reactive binding domain (amino acid p). Therefore, the difference between the top_rep value and the bottom_rep value will be highest for the amino acid that is most likely to act as the receptor (ie bind to the spike protein) instead of the wild type protein. This is a crude analysis but has been done as a first pass.
 
 ```{r}
-tdiff1=abs(bool$Top_rep1-bool$Bottom_rep1)
+tdiff1<-abs(bool$Top_rep1-bool$Bottom_rep1)
 
-mut1=bool$Substitution[which.max(tdiff1)]
+mut1<-bool$Substitution[which.max(tdiff1)]
+
 ```
+
+The above analysis can be repeated for all valid residues, and a vector of likely mutagens has been compiled for both experiment 1 (mut1) and experiment 2 (mut2). These can be compared with the original amino acid chain that binds to the spike protein. 
 
 ```{r}
-#for 
+tdiff1<-list()
+tdiff2<-list()
+mut1<-vector()
+mut2<-vector()
+original<-vector()
+res<-vector()
+
+for (num in res_vector) {
+  bool2<-file[file$Residue..==num, ]
+  if (is.null(bool2)) {
+    next
+  }
+  
+  tdif1=abs(bool2$Top_rep1-bool2$Bottom_rep1)
+  tdif2=abs(bool2$Top_rep2-bool2$Bottom_rep2)
+  
+  original<-c(original, bool2[tdif1==0, "Substitution"])
+  
+  tdiff1<-c(tdiff1,bool2$Residue..[1],abs(bool2$Top_rep1-bool2$Bottom_rep1))
+  tdiff2<-c(tdiff2,bool2$Residue..[1],tdif2)
+  
+  
+  mutt1<-bool2$Substitution[which.max(tdif1)]
+  mutt2<-bool2$Substitution[which.max(tdif2)]
+   if(length(mutt1) != 0)
+  {
+    res<-c(res,num)
+  }
+  
+  
+  mut1<-c(mut1,mutt1)
+  mut2<-c(mut2,mutt2)
+  
+ 
+  
+  #print(str(num) + str('=') + str(mut1))
+
+} 
+
+
+# print(res)
+# 
+# print(mut1)
+# 
+# print(mut2)
+# 
+# print(original)
+
+smoke <- matrix(c(res,original,mut1,mut2),ncol=4)
+colnames(smoke) <- c("Residue","Original","Likely substitute (rep1)","Likely substitute (rep2)")
+#rownames <- c("current","former","never")
+smoke <- as.table(smoke)
+print(smoke)
 
 
 
 
 ```
+
+
 
